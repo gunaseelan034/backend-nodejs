@@ -8,6 +8,9 @@ module.exports = (sequelize, datatype) => {
       type: datatype.INTEGER,
       allowNull: false,
     },
+    uuid: {
+      type: datatype.STRING,
+    },
     relevent_type: {
       type: datatype.ENUM("Generel", "Father", "Mother", "Siblings"),
       allowNull: false,

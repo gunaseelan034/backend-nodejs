@@ -2,15 +2,15 @@ module.exports = (sequelize, datatype) => {
   const student = sequelize.define("student", {
     first_name: {
       type: datatype.STRING,
-      allowNull: false,
     },
     last_name: {
       type: datatype.INTEGER,
-      allowNull: false,
     },
     gender: {
       type: datatype.ENUM("male", "female", "others"),
-      allowNull: false,
+    },
+    uuid: {
+      type: datatype.STRING,
     },
     std: {
       type: datatype.STRING,
@@ -27,10 +27,16 @@ module.exports = (sequelize, datatype) => {
     height: {
       type: datatype.STRING,
     },
-    height: {
+    weight: {
       type: datatype.STRING,
     },
     nationality: {
+      type: datatype.STRING,
+    },
+    mother_tounges: {
+      type: datatype.STRING,
+    },
+    extra_curriculer: {
       type: datatype.STRING,
     },
     community: {
