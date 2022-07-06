@@ -50,7 +50,7 @@ exports.createUser = async (req, res) => {
           year_of_passed: req.body.father.year_of_passed,
         },
       };
-
+'yfty'
       let user = await User.create(data);
       studentData = { ...studentData, uuid: data.uuid };
       let student = await Student.create(studentData);
