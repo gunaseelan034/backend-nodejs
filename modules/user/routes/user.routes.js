@@ -8,4 +8,7 @@ router.post('/verifyotp', () => {});
 
 router.post('/create', controller.createUser);
 
+router.get('/get', controller.getUser);
+
+
 module.exports = router;

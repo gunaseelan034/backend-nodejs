@@ -1,68 +1,89 @@
 const uuid = require("uuid");
 const uuidv4 = uuid.v4();
+const dataParser = require("../../../dataparser/index");
 const db = require("../../../lib/connection");
-const responseSender = require("../../../responsesender/index");
+
 const User = db.user;
-const Student = db.student;
 
 exports.createUser = async (req, res) => {
-  console.log(req.body)
+  console.log(JSON.stringify(req.body) + "is recieved");
+
   let data = {
     email: req.body.email,
     mobile: req.body.mobile,
-    relevent_type: req.body.relevent_type,
+    relevant_type: req.body.relevant_type,
     uuid: uuidv4,
   };
-  let father = {};
-  let studentData = req.body.student;
 
-  if (data.relevent_type === "Generel") {
-    let user = await User.create(data);
-    responseSender(
-      res,
-      {
-        success: true,
-        message: "Successfully Created",
-        data: user,
-      },
-      200
-    );
-  }
-
-  // father as alumini
-  else if (data.relevent_type === "Father") {
-    if (typeof req.body.father === "undefined") {
-      responseSender(
-        res,
-        {
-          success: false,
-          message: "Father Details required",
-          data: [],
-        },
-        400
-      );
-    } else {
-      data = {
-        ...data,
-        father: {
-          ...father,
-          name: req.body.father.name,
-          year_of_passed: req.body.father.year_of_passed,
-        },
-      };
-'yfty'
-      let user = await User.create(data);
-      studentData = { ...studentData, uuid: data.uuid };
-      let student = await Student.create(studentData);
-      responseSender(
-        res,
-        {
+  // generel type
+  if (data.relevant_type === "General") {
+    await User.create(data)
+      .then((resp) => {
+        res.status(200).send({
           success: true,
           message: "Successfully Created",
-          data: { user: user, student: student },
-        },
-        200
-      );
+          data: resp,
+        });
+      })
+      .catch((err) => {
+        res.status(400).send({
+          success: false,
+          message: err,
+          data: null,
+        });
+      });
+  }
+
+  //Father As Alumini
+  else {
+    if (typeof req.body.alumini_details !== "undefined") {
+      data = { ...data, alumini_details: req.body.alumini_details };
+
+      await User.create(data)
+        .then((resp) => {
+          res.status(200).send({
+            success: true,
+            message: "Successfully Created",
+            data: resp,
+          });
+        })
+        .catch((err) => {
+          res.status(400).send({
+            success: false,
+            message: err,
+            data: null,
+          });
+        });
+    } else {
+      res.status(400).send({
+        success: false,
+        message: "Alumini details is required",
+        data: null,
+      });
     }
   }
+};
+
+//get user all
+exports.getUser = async (req, res) => {
+  await User.findAll()
+    .then((resp) => {
+      for (let i = 0; i < resp.length; i++) {
+        let alumini_details = dataParser.dataParser(resp[i].alumini_details);
+        resp[i].alumini_details = alumini_details;
+        resp[i].alumini_details = alumini_details;
+      }
+      res.status(200).send({
+        success: true,
+        message: null,
+        data: resp,
+      });
+    })
+    .catch((err) => {
+      res.status(400).send({
+        success: true,
+        message: null,
+        data: err,
+      });
+    });
 };

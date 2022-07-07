@@ -42,6 +42,9 @@ module.exports = (sequelize, datatype) => {
     community: {
       type: datatype.STRING,
     },
+    distance: {
+      type: datatype.STRING,
+    },
     prof_in_sports: {
       type: datatype.STRING,
     },

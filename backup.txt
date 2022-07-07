@@ -1,0 +1,77 @@
+// father as alumini
+  else if (data.relevent_type === "Father") {
+    if (typeof req.body.father === "undefined") {
+      responseSender(
+        res,
+        {
+          success: false,
+          message: "Father Details required",
+          data: [],
+        },
+        400
+      );
+    } else {
+      data = {
+        ...data,
+        father: {
+          ...father,
+          name: req.body.father.name,
+          year_of_passed: req.body.father.year_of_passed,
+        },
+      };
+      studentData = { ...studentData, uuid: data.uuid };
+      parentdetails = { ...parentdetails, uuid: data.uuid };
+
+      let user = await User.create(data);
+      let student = await Student.create(studentData);
+      let parent = await Parentdetails.create(parentdetails);
+      responseSender(
+        res,
+        {
+          success: true,
+          message: "Successfully Created",
+          data: { user: user, student: student, parentdetails: parent },
+        },
+        200
+      );
+    }
+  }
+
+  //mother as alumnis
+  else if (data.relevent_type === "Mother") {
+    if (typeof req.body.mother === "undefined") {
+      responseSender(
+        res,
+        {
+          success: false,
+          message: "Mother Details required",
+          data: [],
+        },
+        400
+      );
+    } else {
+      data = {
+        ...data,
+        mother: {
+          ...mother,
+          name: req.body.mother.name,
+          year_of_passed: req.body.mother.year_of_passed,
+        },
+      };
+      studentData = { ...studentData, uuid: data.uuid };
+      parentdetails = { ...parentdetails, uuid: data.uuid };
+
+      let user = await User.create(data);
+      let student = await Student.create(studentData);
+      let parent = await Parentdetails.create(parentdetails);
+      responseSender(
+        res,
+        {
+          success: true,
+          message: "Successfully Created",
+          data: { user: user, student: student, parentdetails: parent },
+        },
+        200
+      );
+    }
+  }
