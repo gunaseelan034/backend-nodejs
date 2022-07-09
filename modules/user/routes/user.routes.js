@@ -10,5 +10,9 @@ router.post('/create', controller.createUser);
 
 router.get('/get', controller.getUser);
 
+router.get('/getbyid/:id', controller.getUserById);
+
+router.put('/updatestatus', controller.updateapplicationStatus);
+
 
 module.exports = router;

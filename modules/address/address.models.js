@@ -1,19 +1,19 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const parentdetails = sequelize.define("parentdetails", {
+  const address = sequelize.define("address", {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    mother_details: {
+    communication_address: {
       type: DataTypes.JSON,
     },
-    father_details: {
+    permanent_address: {
       type: DataTypes.JSON,
     },
   });
-  return parentdetails;
+  return address;
 };

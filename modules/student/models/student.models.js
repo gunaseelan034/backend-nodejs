@@ -1,56 +1,68 @@
-module.exports = (sequelize, datatype) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const student = sequelize.define("student", {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
     first_name: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
     last_name: {
-      type: datatype.INTEGER,
+      type: DataTypes.STRING,
     },
     gender: {
-      type: datatype.ENUM("male", "female", "others"),
+      type: DataTypes.ENUM("male", "female", "others"),
     },
-    uuid: {
-      type: datatype.STRING,
+    age: {
+      type: DataTypes.INTEGER,
     },
-    std: {
-      type: datatype.STRING,
+    class: {
+      type: DataTypes.STRING,
     },
     dob: {
-      type: datatype.INTEGER,
-    },
-    blood_group: {
-      type: datatype.STRING,
-    },
-    adhar: {
-      type: datatype.INTEGER,
+      type: DataTypes.INTEGER,
     },
     height: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
     weight: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
+    },
+    blood_group: {
+      type: DataTypes.STRING,
+    },
+    aadhar_no: {
+      type: DataTypes.INTEGER,
     },
     nationality: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
-    mother_tounges: {
-      type: datatype.STRING,
+    mother_tongue: {
+      type: DataTypes.STRING,
     },
-    extra_curriculer: {
-      type: datatype.STRING,
+    extra_curricular: {
+      type: DataTypes.STRING,
+    },
+    religion: {
+      type: DataTypes.STRING,
     },
     community: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
     distance: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
     prof_in_sports: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
     board: {
-      type: datatype.STRING,
+      type: DataTypes.STRING,
     },
   });
+
   return student;
 };
