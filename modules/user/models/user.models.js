@@ -18,7 +18,6 @@ module.exports = (sequelize) => {
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
       status: {
         type: DataTypes.ENUM("approve", "reject", "shortlist", "waiting"),
@@ -26,14 +25,12 @@ module.exports = (sequelize) => {
       },
       mobile: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       admission_no: {
         type: DataTypes.TEXT,
       },
       relevant_type: {
         type: DataTypes.ENUM("General", "Father", "Mother", "Siblings"),
-        allowNull: false,
       },
       alumini_details: {
         type: DataTypes.JSON,

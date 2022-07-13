@@ -10,11 +10,11 @@ exports.createUser = async (req, res) => {
     email: req.body.email,
     mobile: req.body.mobile,
     relevant_type: req.body.relevant_type,
-    admission_no: new Date().getFullYear() + "MVM" + (000),
+    admission_no: new Date().getFullYear() + "MVM" + 000,
   };
-  let student = req.body.student_details;
-  let parent = req.body.parent_details;
-  let address = req.body.address;
+  let student = JSON.parse(req.body.student_details);
+  let parent = JSON.parse(req.body.parent_details);
+  let address = JSON.parse(req.body.address);
 
   // generel type
   if (user.relevant_type === "General") {

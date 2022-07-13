@@ -4,7 +4,7 @@ const path = require("path");
 const saveAdharCard = () => {
   const imageStorage = multer.diskStorage({
     // Destination to store image
-    destination: "./public/images/adhar",
+    destination: "images",
     filename: (req, file, cb) => {
       cb(
         null,
