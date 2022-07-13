@@ -6,12 +6,19 @@ const Parent = db.parentdetails;
 const Address = db.address;
 
 exports.createUser = async (req, res) => {
+  const tmpArr = [];
+  const x = new Date().getFullYear() + "MVM" + 0001;
+  const totalData = await User.findAll();
+  tmpArr.push(totalData);
+  const increamentValue = tmpArr[0].length + 1;
   let user = {
     email: req.body.email,
     mobile: req.body.mobile,
     relevant_type: req.body.relevant_type,
-    admission_no: new Date().getFullYear() + "MVM" + 000,
+    adhar_card: req.file.path,
+    admission_no: new Date().getFullYear() + "MVM"+ 0 + increamentValue,
   };
+
   let student = JSON.parse(req.body.student_details);
   let parent = JSON.parse(req.body.parent_details);
   let address = JSON.parse(req.body.address);

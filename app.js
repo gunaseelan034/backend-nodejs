@@ -1,13 +1,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+
 /*< ----------------- database connection ---------------> */
 require("./lib/connection");
-require("./multer/index");
 
 app.use(express.json());
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
+app.use('Images',express.static('./Images'));
 
 const userRoutes = require("./modules/user/routes/user.routes");
 
@@ -17,7 +18,6 @@ const userRoutes = require("./modules/user/routes/user.routes");
 app.get("/", (req, res) => {
   res.send("welcome");
 });
-
 app.use("/user", userRoutes);
 /*
  < --------------------  ROUTES  ---------------------->

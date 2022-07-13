@@ -16,6 +16,9 @@ module.exports = (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      adhar_card: {
+        type: DataTypes.STRING,
+      },
       email: {
         type: DataTypes.STRING,
       },
