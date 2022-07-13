@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
 /*< ----------------- database connection ---------------> */
 require("./lib/connection");
+require("./multer/index");
 
 app.use(express.json());
 app.use(cors());
@@ -17,6 +17,7 @@ const userRoutes = require("./modules/user/routes/user.routes");
 app.get("/", (req, res) => {
   res.send("welcome");
 });
+
 app.use("/user", userRoutes);
 /*
  < --------------------  ROUTES  ---------------------->

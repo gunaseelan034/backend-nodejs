@@ -1,18 +1,16 @@
 const dataParser = require("../../../dataparser/index");
 const db = require("../../../lib/connection");
-const uuid = require("uuid");
 const User = db.user;
 const Student = db.student;
 const Parent = db.parentdetails;
 const Address = db.address;
 
 exports.createUser = async (req, res) => {
-  console.log(JSON.stringify(req.body) + "is recieved");
   let user = {
     email: req.body.email,
     mobile: req.body.mobile,
     relevant_type: req.body.relevant_type,
-    admission_no: req.body.email.slice(0, 4) + uuid.v4().slice(0, 8),
+    admission_no: new Date().getFullYear() + "MVM" + (000),
   };
   let student = req.body.student_details;
   let parent = req.body.parent_details;
@@ -117,8 +115,6 @@ exports.getUserById = async (req, res) => {
     include: [Student, Parent, Address],
   })
     .then((resp) => {
-      console.log("user", resp);
-
       res.status(200).send({
         success: true,
         message: null,
@@ -134,9 +130,21 @@ exports.getUserById = async (req, res) => {
     });
 };
 
+exports.getSuggestionStudent = (req, res) => {
+  User.findAll({ include: [Student] })
+    .then((resp) => {
+      var newArray = resp.filter((el) => {
+        return el.admission_no.includes(req.params.filter);
+      });
+      res.status(200).send({ data: newArray });
+    })
+    .catch((err) => {
+      res.send({ success: false, data: err });
+    });
+};
+
 //get user by Id
 exports.updateapplicationStatus = async (req, res) => {
-  console.log("qwdqwdw", req.body);
   User.findAll({ where: { id: 4 } })
     .then(function (user) {
       User.update(

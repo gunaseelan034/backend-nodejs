@@ -1,18 +1,17 @@
-const express = require('express');
+const express = require("express");
+const { saveAdharCard } = require("../../../multer");
 const router = express.Router();
-const controller = require('../controller/user.contrl');
+const controller = require("../controller/user.contrl");
 
-router.post('/sendotp', () => {});
+// post
+router.post("/create", saveAdharCard().single("image"), controller.createUser);
 
-router.post('/verifyotp', () => {});
+//get
+router.get("/get", controller.getUser);
+router.get("/getbyid/:id", controller.getUserById);
+router.get("/getstudent/:filter", controller.getSuggestionStudent);
 
-router.post('/create', controller.createUser);
-
-router.get('/get', controller.getUser);
-
-router.get('/getbyid/:id', controller.getUserById);
-
-router.put('/updatestatus', controller.updateapplicationStatus);
-
+//update status
+router.put("/updatestatus", controller.updateapplicationStatus);
 
 module.exports = router;
