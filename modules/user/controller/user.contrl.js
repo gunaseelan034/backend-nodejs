@@ -7,16 +7,20 @@ const Address = db.address;
 
 exports.createUser = async (req, res) => {
   const tmpArr = [];
-  const x = new Date().getFullYear() + "MVM" + 0001;
   const totalData = await User.findAll();
   tmpArr.push(totalData);
   const increamentValue = tmpArr[0].length + 1;
-  let user = {
+
+  const user = {
     email: req.body.email,
     mobile: req.body.mobile,
     relevant_type: req.body.relevant_type,
-    adhar_card: req.file.path,
-    admission_no: new Date().getFullYear() + "MVM"+ 0 + increamentValue,
+    applicant_photo: req.files.applicant_photo[0].filename,
+    adhar_photo: req.files.adhar_photo[0].filename,
+    age_proof: req.files.age_proof[0].filename,
+    father_photo: req.files.father_photo[0].filename,
+    mother_photo: req.files.mother_photo[0].filename,
+    admission_no: new Date().getFullYear() + "MVM" + 0 + increamentValue,
   };
 
   let student = JSON.parse(req.body.student_details);
@@ -26,22 +30,24 @@ exports.createUser = async (req, res) => {
   // generel type
   if (user.relevant_type === "General") {
     User.create(user)
-      .then((resp) => {
+      .then((resp_parent) => {
         // student
-        student = { ...student, parent_id: resp.id };
+        student = { ...student, parent_id: resp_parent.id };
         Student.create(student)
           .then(() => {
             // parent
-            parent = { ...parent, parent_id: resp.id };
+            parent = { ...parent, parent_id: resp_parent.id };
             Parent.create(parent)
               .then(() => {
                 // address
-                address = { ...address, parent_id: resp.id };
+                address = { ...address, parent_id: resp_parent.id };
                 Address.create(address)
                   .then((resp) =>
-                    res
-                      .status(200)
-                      .send({ success: true, message: "Successfully Created" })
+                    res.status(200).send({
+                      success: true,
+                      message: "Successfully Created",
+                      data: resp_parent,
+                    })
                   )
                   .catch((err) =>
                     res.status(400).send({ success: false, data: err })
@@ -93,25 +99,61 @@ exports.createUser = async (req, res) => {
 
 //get user all
 exports.getUser = async (req, res) => {
-  await User.findAll({ include: [Student, Parent, Address] })
-    .then((resp) => {
-      for (let i = 0; i < resp.length; i++) {
-        let alumini_details = dataParser.dataParser(resp[i].alumini_details);
-        resp[i].alumini_details = alumini_details;
+  if (typeof req.params.filters !== "undefined") {
+    const parsedQuery = JSON.parse(req.params.filters);
+    const isEmpty = Object.keys(parsedQuery).length === 0;
+
+    if (isEmpty) {
+      await User.findAll({
+        include: [Student, Parent, Address],
+      })
+        .then((resp) => {
+          for (let i = 0; i < resp.length; i++) {
+            let alumini_details = dataParser.dataParser(
+              resp[i].alumini_details
+            );
+            resp[i].alumini_details = alumini_details;
+          }
+          res.status(200).send({
+            success: true,
+            message: null,
+            data: resp.reverse(),
+          });
+        })
+        .catch((err) => {
+          res.status(400).send({
+            success: true,
+            message: null,
+            data: err,
+          });
+        });
+    } 
+  } else {
+      const relevantType = parsedQuery.relevant_type;
+      const mobile = parsedQuery.mobile;
+
+      if (typeof mobile === "undefined") {
+        let user = await User.findAll({
+          include: [Student, Parent, Address],
+          where: { relevant_type: relevantType },
+        });
+        res.status(200).send({
+          success: true,
+          message: null,
+          data: user.reverse(),
+        });
+      } else if (typeof relevantType === "undefined") {
+        let user = await User.findAll({
+          include: [Student, Parent, Address],
+          where: { mobile: mobile },
+        });
+        res.status(200).send({
+          success: true,
+          message: null,
+          data: user.reverse(),
+        });
       }
-      res.status(200).send({
-        success: true,
-        message: null,
-        data: resp.reverse(),
-      });
-    })
-    .catch((err) => {
-      res.status(400).send({
-        success: true,
-        message: null,
-        data: err,
-      });
-    });
+  }
 };
 
 //get user by Id
@@ -137,6 +179,7 @@ exports.getUserById = async (req, res) => {
     });
 };
 
+//get suggestion
 exports.getSuggestionStudent = (req, res) => {
   User.findAll({ include: [Student] })
     .then((resp) => {
@@ -150,7 +193,7 @@ exports.getSuggestionStudent = (req, res) => {
     });
 };
 
-//get user by Id
+//update user by Id
 exports.updateapplicationStatus = async (req, res) => {
   User.findAll({ where: { id: 4 } })
     .then(function (user) {

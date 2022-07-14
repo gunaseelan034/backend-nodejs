@@ -16,7 +16,19 @@ module.exports = (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      adhar_card: {
+      applicant_photo: {
+        type: DataTypes.STRING,
+      },
+      age_proof: {
+        type: DataTypes.STRING,
+      },
+      adhar_photo: {
+        type: DataTypes.STRING,
+      },
+      father_photo: {
+        type: DataTypes.STRING,
+      },
+      mother_photo: {
         type: DataTypes.STRING,
       },
       email: {
@@ -27,7 +39,7 @@ module.exports = (sequelize) => {
         defaultValue: "waiting",
       },
       mobile: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TEXT,
       },
       admission_no: {
         type: DataTypes.TEXT,
@@ -39,9 +51,6 @@ module.exports = (sequelize) => {
         type: DataTypes.JSON,
       },
     },
-    {
-      timestamps: true,
-    }
   );
 
   return user;
