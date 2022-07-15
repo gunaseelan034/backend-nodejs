@@ -1,23 +1,33 @@
-const addUserInDb = (callback) => {
-    User.create(data).then((data) => callback(null, data)).catch((err) => {res.send({err})});
-  };
-  const addStudentInDb = (callback) => {
-    Student.create({ first_name: 'guna' }).then((data) => callback(null, data)).catch((err) => {res.send(err)});
-  };
+const parsedQuery = JSON.parse(req.params.filters);
+  const isEmpty = Object.keys(parsedQuery).length === 0;
 
-  // generel type
-  if (data.relevant_type === "General") {
-    async.parallel([addUserInDb, addStudentInDb], (err, doc) => {
-      if (err) {
-        res.status(400).send({
-          success: false,
-          data: [],
-        });
-      } else {
+  if (isEmpty) {
+    await User.findAll({
+      include: [Student, Parent, Address],
+    })
+      .then((resp) => {
+        for (let i = 0; i < resp.length; i++) {
+          let alumini_details = dataParser.dataParser(resp[i].alumini_details);
+          resp[i].alumini_details = alumini_details;
+        }
         res.status(200).send({
           success: true,
-          data: doc,
+          message: null,
+          data: resp.reverse(),
         });
-      }
+      })
+      .catch((err) => {
+        res.status(400).send({
+          success: true,
+          message: null,
+          data: err,
+        });
+      });
+  } else {
+    const relevantType = parsedQuery.relevant_type;
+    const mobile = parsedQuery.mobile;
+    let user = await User.findAll({
+      where: { relevant_type: relevantType },
     });
+    console.log(user);
   }

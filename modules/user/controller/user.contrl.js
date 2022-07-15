@@ -1,5 +1,7 @@
+const { sendMail } = require("../../../config/nodemailer");
 const dataParser = require("../../../dataparser/index");
 const db = require("../../../lib/connection");
+const { getUserbyFilter } = require("./filterbygetuser");
 const User = db.user;
 const Student = db.student;
 const Parent = db.parentdetails;
@@ -99,60 +101,38 @@ exports.createUser = async (req, res) => {
 
 //get user all
 exports.getUser = async (req, res) => {
-  if (typeof req.params.filters !== "undefined") {
-    const parsedQuery = JSON.parse(req.params.filters);
-    const isEmpty = Object.keys(parsedQuery).length === 0;
+  const parsedQuery = JSON.parse(req.params.filters);
+  const isEmpty = Object.keys(parsedQuery).length === 0;
+  console.log(isEmpty);
 
-    if (isEmpty) {
-      await User.findAll({
-        include: [Student, Parent, Address],
-      })
-        .then((resp) => {
-          for (let i = 0; i < resp.length; i++) {
-            let alumini_details = dataParser.dataParser(
-              resp[i].alumini_details
-            );
-            resp[i].alumini_details = alumini_details;
-          }
-          res.status(200).send({
-            success: true,
-            message: null,
-            data: resp.reverse(),
-          });
-        })
-        .catch((err) => {
-          res.status(400).send({
-            success: true,
-            message: null,
-            data: err,
-          });
-        });
-    } 
+  if (!isEmpty) {
+    console.log(parsedQuery, "BEFORE");
+
+    parsedQuery.mobile === "" ? delete parsedQuery.mobile : parsedQuery.mobile;
+    console.log(parsedQuery, "AFTER");
+    getUserbyFilter(parsedQuery, res, User, Student, Parent, Address);
   } else {
-      const relevantType = parsedQuery.relevant_type;
-      const mobile = parsedQuery.mobile;
-
-      if (typeof mobile === "undefined") {
-        let user = await User.findAll({
-          include: [Student, Parent, Address],
-          where: { relevant_type: relevantType },
-        });
+    await User.findAll({
+      include: [Student, Parent, Address],
+    })
+      .then((resp) => {
+        for (let i = 0; i < resp.length; i++) {
+          let alumini_details = dataParser.dataParser(resp[i].alumini_details);
+          resp[i].alumini_details = alumini_details;
+        }
         res.status(200).send({
           success: true,
           message: null,
-          data: user.reverse(),
+          data: resp.reverse(),
         });
-      } else if (typeof relevantType === "undefined") {
-        let user = await User.findAll({
-          include: [Student, Parent, Address],
-          where: { mobile: mobile },
-        });
-        res.status(200).send({
+      })
+      .catch((err) => {
+        res.status(400).send({
           success: true,
           message: null,
-          data: user.reverse(),
+          data: err,
         });
-      }
+      });
   }
 };
 
@@ -195,24 +175,28 @@ exports.getSuggestionStudent = (req, res) => {
 
 //update user by Id
 exports.updateapplicationStatus = async (req, res) => {
-  User.findAll({ where: { id: 4 } })
-    .then(function (user) {
-      User.update(
-        {
-          status: req.body.status,
-        },
-        {
-          where: { id: req.body.id },
-        }
-      )
-        .then((resp) => {
+  console.log(req.body);
+  User.update(
+    {
+      status: req.body.status,
+    },
+    {
+      where: { id: req.body.id },
+    }
+  )
+    .then((resp) => {
+      User.findAll({
+        where: { id: req.body.id },
+      })
+        .then((userResp) => {
+          console.log(userResp);
+
+          sendMail(userResp[0].status, req.body.studentData, res);
           res.send({ success: true, message: "SuccessFully Updated" });
         })
-        .catch((err) => {
-          res.send({ success: true, message: "Error Occured While Creating!" });
-        });
+        .catch((err) => res.send({ data: err }));
     })
     .catch((err) => {
-      console.log(err);
+      res.send({ success: true, message: "Error Occured While Creating!" });
     });
 };

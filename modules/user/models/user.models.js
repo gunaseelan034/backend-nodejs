@@ -39,7 +39,7 @@ module.exports = (sequelize) => {
         defaultValue: "waiting",
       },
       mobile: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
       },
       admission_no: {
         type: DataTypes.TEXT,
