@@ -183,17 +183,22 @@ exports.getUserbyFilter = async (
     console.log("all three params");
     await User.findAll({
       include: [Student, Parent, Address],
-      where: { relevant_type: parsedQuery.relevant_type },
       where: { mobile: parsedQuery.mobile },
     })
       .then((resp) => {
-        let tmpVal = resp.filter((el) => {
+        // nested filters
+        let classFilter = resp.filter((el) => {
           return el.students[0].class == parsedQuery.class;
         });
+
+        let relTypeFilter = classFilter.filter((el) => {
+          return el.relevant_type == parsedQuery.relevant_type;
+        });
+
         res.status(200).send({
           success: true,
           message: null,
-          data: tmpVal.reverse(),
+          data: relTypeFilter.reverse(),
         });
       })
       .catch((err) => {

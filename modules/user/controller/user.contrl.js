@@ -7,50 +7,102 @@ const Student = db.student;
 const Parent = db.parentdetails;
 const Address = db.address;
 
+exports.verifyEmail = async (req, res) => {
+  console.log("hitted");
+};
+
 exports.createUser = async (req, res) => {
   const tmpArr = [];
   const totalData = await User.findAll();
   tmpArr.push(totalData);
   const increamentValue = tmpArr[0].length + 1;
 
-  const user = {
-    email: req.body.email,
-    mobile: req.body.mobile,
-    relevant_type: req.body.relevant_type,
-    applicant_photo: req.files.applicant_photo[0].filename,
-    adhar_photo: req.files.adhar_photo[0].filename,
-    age_proof: req.files.age_proof[0].filename,
-    father_photo: req.files.father_photo[0].filename,
-    mother_photo: req.files.mother_photo[0].filename,
-    admission_no: new Date().getFullYear() + "MVM" + 0 + increamentValue,
-  };
+  
+    
+    let user = {
+      email: req.body.email,
+      mobile: req.body.mobile,
+      relevant_type: req.body.relevant_type,
+      applicant_photo: req.files.applicant_photo[0].filename,
+      adhar_photo: req.files.adhar_photo[0].filename,
+      age_proof: req.files.age_proof[0].filename,
+      father_photo: req.files.father_photo[0].filename,
+      mother_photo: req.files.mother_photo[0].filename,
+      admission_no: new Date().getFullYear() + "MVM" + 0 + increamentValue,
+    };
+    let student = JSON.parse(req.body.student_details);
+    let parent = JSON.parse(req.body.parent_details);
+    let address = JSON.parse(req.body.address);
+    if (user.relevant_type === "General") {
+      User.create(user)
+        .then((resp_parent) => {
+          // student
+          student = { ...student, parent_id: resp_parent.id };
+          Student.create(student)
+            .then(() => {
+              // parent
+              parent = { ...parent, parent_id: resp_parent.id };
+              Parent.create(parent)
+                .then(() => {
+                  // address
+                  address = { ...address, parent_id: resp_parent.id };
+                  Address.create(address)
+                    .then((resp) =>
+                      res.status(200).send({
+                        success: true,
+                        message: "Successfully Created",
+                        data: resp_parent,
+                      })
+                    )
+                    .catch((err) =>
+                      res.status(400).send({ success: false, data: err })
+                    );
+                })
+                .catch((err) =>
+                  res.status(400).send({ success: false, data: err })
+                );
+            })
+            .catch((err) =>
+              res.status(400).send({ success: false, data: err })
+            );
+        })
+        .catch((err) => res.status(400).send({ success: false, data: err }));
+    }
 
-  let student = JSON.parse(req.body.student_details);
-  let parent = JSON.parse(req.body.parent_details);
-  let address = JSON.parse(req.body.address);
-
-  // generel type
-  if (user.relevant_type === "General") {
-    User.create(user)
-      .then((resp_parent) => {
-        // student
-        student = { ...student, parent_id: resp_parent.id };
-        Student.create(student)
-          .then(() => {
-            // parent
-            parent = { ...parent, parent_id: resp_parent.id };
-            Parent.create(parent)
+    // if alimini
+    else {
+      if (typeof req.body.alumini_details === "undefined") {
+        console.log("1 alumini details required");
+        res.status(400).send({ data: [], message: "Alumini details required" });
+      } else {
+        console.log("2", JSON.parse(req.body.alumini_details));
+        user = {
+          ...user,
+          alumini_details: JSON.parse(req.body.alumini_details),
+        };
+        User.create(user)
+          .then((resp) => {
+            // student
+            student = { ...student, parent_id: resp.id };
+            Student.create(student)
               .then(() => {
-                // address
-                address = { ...address, parent_id: resp_parent.id };
-                Address.create(address)
-                  .then((resp) =>
-                    res.status(200).send({
-                      success: true,
-                      message: "Successfully Created",
-                      data: resp_parent,
-                    })
-                  )
+                // parent
+                parent = { ...parent, parent_id: resp.id };
+                Parent.create(parent)
+                  .then(() => {
+                    // address
+                    address = { ...address, parent_id: resp.id };
+                    Address.create(address)
+                      .then((resp) =>
+                        res.status(200).send({
+                          success: true,
+                          message: "Successfully Created",
+                        })
+                      )
+                      .catch((err) =>
+                        res.status(400).send({ success: false, data: err })
+                      );
+                  })
                   .catch((err) =>
                     res.status(400).send({ success: false, data: err })
                   );
@@ -60,43 +112,8 @@ exports.createUser = async (req, res) => {
               );
           })
           .catch((err) => res.status(400).send({ success: false, data: err }));
-      })
-      .catch((err) => res.status(400).send({ success: false, data: err }));
-  }
-
-  // if alimini
-  else {
-    user = { ...user, alumini_details: req.body.alumini_details };
-    User.create(user)
-      .then((resp) => {
-        // student
-        student = { ...student, parent_id: resp.id };
-        Student.create(student)
-          .then(() => {
-            // parent
-            parent = { ...parent, parent_id: resp.id };
-            Parent.create(parent)
-              .then(() => {
-                // address
-                address = { ...address, parent_id: resp.id };
-                Address.create(address)
-                  .then((resp) =>
-                    res
-                      .status(200)
-                      .send({ success: true, message: "Successfully Created" })
-                  )
-                  .catch((err) =>
-                    res.status(400).send({ success: false, data: err })
-                  );
-              })
-              .catch((err) =>
-                res.status(400).send({ success: false, data: err })
-              );
-          })
-          .catch((err) => res.status(400).send({ success: false, data: err }));
-      })
-      .catch((err) => res.status(400).send({ success: false, data: err }));
-  }
+      }
+    }
 };
 
 //get user all

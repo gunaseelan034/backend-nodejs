@@ -29,5 +29,4 @@ const parsedQuery = JSON.parse(req.params.filters);
     let user = await User.findAll({
       where: { relevant_type: relevantType },
     });
-    console.log(user);
   }

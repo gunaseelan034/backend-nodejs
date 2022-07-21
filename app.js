@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use("/static", express.static(path.join(__dirname, 'public')));
-console.log("__dirname", __dirname);
 
 const userRoutes = require("./modules/user/routes/user.routes");
 

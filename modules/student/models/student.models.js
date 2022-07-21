@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
     },
     dob: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     height: {
       type: DataTypes.STRING,
