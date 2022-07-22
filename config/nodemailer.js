@@ -1,18 +1,38 @@
 const nodemailer = require("nodemailer");
 
-exports.sendMail = (status, userEmail, res) => {
+exports.sendMail = (resp, userEmail, res) => {
   const assignStatus = () => {
-    if (status === "approve")
-      return 'Admission Id: '+ userEmail.admission_no + " Your Application Approved!";
-    if (status === "shortlist")
+    if (resp.status === "approve")
       return (
-        'Admission Id: '+userEmail.admission_no +
+        "Admission Id: " +
+        userEmail.admission_no +
+        " Your Application Approved!"
+      );
+    if (resp.status === "shortlist")
+      return (
+        "Admission Id: " +
+        userEmail.admission_no +
         " Your Application is Shortlisted for Next Filtration"
       );
-    if (status === "reject")
-      return 'Admission Id: '+ userEmail.admission_no + " Your Application is Rejected";
-    if (status === "waiting")
-      return 'Admission Id: '+ userEmail.admission_no + " Your application is Keep Waiting List";
+    if (resp.status === "reject")
+      return (
+        "Admission Id: " +
+        userEmail.admission_no +
+        " Your Application is Rejected"
+      );
+    if (resp.status === "waiting")
+      return (
+        "Admission Id: " +
+        userEmail.admission_no +
+        " Your application is Keep Waiting List"
+      );
+    if (resp.status === "Interview")
+      return (
+        "Admission Id: " +
+        userEmail.admission_no +
+        "School Management is Scheduled the Interview On" +
+        resp.interview_date
+      );
   };
 
   const body_template = assignStatus();
@@ -20,7 +40,7 @@ exports.sendMail = (status, userEmail, res) => {
     service: "Gmail",
     auth: {
       user: "gunaseelank04@gmail.com",
-      pass: "fttt mtmc emlm ynap",  // smtp google auth pass
+      pass: "fttt mtmc emlm ynap", // smtp google auth pass
     },
   });
 
@@ -34,7 +54,7 @@ exports.sendMail = (status, userEmail, res) => {
   smtpProtocol.sendMail(mailoption, function (err, response) {
     if (err) {
       console.log(err);
-      res.status(400).send({success: false, data: err})
+      res.status(400).send({ success: false, data: err });
     }
     console.log("Message Sent");
     smtpProtocol.close();

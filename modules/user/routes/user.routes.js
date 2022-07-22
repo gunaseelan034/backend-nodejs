@@ -11,11 +11,12 @@ router.post("/create", uploadApplicantPhoto(), controller.createUser);
 
 //get
 router.get("/get/:filters", controller.getUser);
-router.get("/getbyid/:id", controller.getUserById);
+router.get("/getbyid/:id", controller.getUserById); //getinterviewlist
 router.get("/getstudent/:filter", controller.getSuggestionStudent);
+router.get("/getinterviewlist", controller.getInterViewList);
 
 //update status
 router.put("/updatestatus", controller.updateapplicationStatus);
-router.out('/sheduleinterview', controller.updateapplicationStatus)
+router.put('/sheduleinterview', controller.sheduleInterview);
 
 module.exports = router;
