@@ -31,6 +31,7 @@ exports.createUser = async (req, res) => {
   let student = JSON.parse(req.body.student_details);
   let parent = JSON.parse(req.body.parent_details);
   let address = JSON.parse(req.body.address);
+
   if (user.relevant_type === "General") {
     User.create(user)
       .then((resp_parent) => {
@@ -189,16 +190,16 @@ exports.getSuggestionStudent = async (req, res) => {
 //get interview list
 exports.getInterViewList = async (req, res) => {
   console.log("hitted");
-  User.findAll(
-    {where: {status: 'Interview'},
+  User.findAll({
+    where: { status: "Interview" },
     include: [Student, Parent, Address],
-
-  },
-  ).then((resp) => {
-    res.send({ success: true, message: null, data: resp.reverse() });
-  }).catch((err) => {
-    res.send({ success: false, message: null, data: [] });
   })
+    .then((resp) => {
+      res.send({ success: true, message: null, data: resp.reverse() });
+    })
+    .catch((err) => {
+      res.send({ success: false, message: null, data: [] });
+    });
 };
 
 //update user by Id
@@ -243,6 +244,16 @@ exports.sheduleInterview = async (req, res) => {
       User.update(
         {
           interview_date: req.body.interview_date,
+        },
+        {
+          where: { id: req.body.id },
+        }
+      );
+    })
+    .then(() => {
+      User.update(
+        {
+          interview_time: req.body.interview_time,
         },
         {
           where: { id: req.body.id },

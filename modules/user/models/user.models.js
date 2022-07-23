@@ -46,6 +46,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    interview_time: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
     mobile: {
       type: DataTypes.STRING,
     },
